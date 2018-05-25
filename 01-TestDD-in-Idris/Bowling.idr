@@ -1,6 +1,6 @@
 module Bowling
 
--- %default total
+ %default total
 
 data OngoingFrame = NoOngoing
                    | Incomplete Nat
@@ -37,11 +37,13 @@ rolls (MkGame NoOngoing completed) first with (isStrike first)
     rolls (MkGame NoOngoing completed) first | (Yes prf) | (Yes x) = MkGame (ExtraRoll1 10) completed
     rolls (MkGame NoOngoing completed) first | (Yes prf) | (No contra) = MkGame NoOngoing (addFrame completed Strike)
   rolls (MkGame NoOngoing completed) first | (No contra) = MkGame (Incomplete first) completed
+
 rolls (MkGame (Incomplete first) completed) second with (isSpare first second)
   rolls (MkGame (Incomplete first) completed) second | (No contra) = MkGame NoOngoing (addFrame completed (Normal first second))
   rolls (MkGame (Incomplete first) completed) second | (Yes prf) with (isLastFrame completed)
     rolls (MkGame (Incomplete first) completed) second | (Yes prf) | (Yes x) = MkGame (ExtraRoll2 first second) completed
     rolls (MkGame (Incomplete first) completed) second | (Yes prf) | (No contra) = MkGame NoOngoing (addFrame completed (Spare first second))
+
 rolls (MkGame (ExtraRoll1 first) completed) second = MkGame (ExtraRoll2 first second) completed
 rolls (MkGame (ExtraRoll2 first second) completed) third with (isStrike first)
   rolls (MkGame (ExtraRoll2 first second) completed) third | (Yes prf) = MkGame NoOngoing (addFrame completed (LastStrike second third))
