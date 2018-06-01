@@ -108,9 +108,6 @@ allInTheGuttersScoresZero = Refl
 allOneDownsScores20 : score' (replay (replicate 20 1)) = Just 20
 allOneDownsScores20 = Refl
 
-spareScoringIsOK : score' (replay (5::5::3::replicate 17 0)) = Just 16
-spareScoringIsOK = Refl
-
 strikeScoringIsOK : score' (replay (10::3::6::replicate 16 0)) = Just 28
 strikeScoringIsOK = Refl
 
@@ -119,3 +116,19 @@ perfectScoreIs300 = Refl
 
 lastFrameSpareScoresIsOk : score' (replay (replicate 18 0 ++ [5,5,3])) = Just 13
 lastFrameSpareScoresIsOk = Refl
+
+
+spareScoringIsOK :  (notStrike : Not (fstRoll = 10))
+                 -> (spareProof : (fstRoll + sndRoll = 10))
+                 -> (thirdNotStrike : Not (thirdRoll = 10))
+                 -> score' (replay (fstRoll::sndRoll::thirdRoll::replicate 17 0)) = Just ((fstRoll + sndRoll + thirdRoll) + thirdRoll)
+spareScoringIsOK notStrike spareProof thirdNotStrike {fstRoll} {sndRoll} {thirdRoll} with (isStrike fstRoll)
+  | (Yes prf) = void (notStrike prf)
+  | (No  _)   with (isSpare fstRoll sndRoll)
+    | (No notASpare) = void (notASpare spareProof)
+    | (Yes _) with (isStrike thirdRoll)
+      | (Yes prf) = void (thirdNotStrike prf)
+      | (No _) with (isSpare thirdRoll 0)
+        | (Yes secondFrameIsASpare) =  void (thirdNotStrike (rewrite sym (plusZeroRightNeutral thirdRoll) in secondFrameIsASpare))
+        | (No _) = rewrite spareProof in rewrite (plusZeroRightNeutral thirdRoll) in rewrite (plusZeroRightNeutral thirdRoll) in Refl
+
