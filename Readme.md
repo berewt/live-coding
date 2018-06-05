@@ -3,7 +3,7 @@
 This repository contains code created during my
 [live-coding sessions](https://www.twitch.tv/berewt) on twitch.
 
-The live coding hasn't started yet.
+The live coding sessions usually take place every Fridays at 9pm (CET).
 
 ## Contents
 
